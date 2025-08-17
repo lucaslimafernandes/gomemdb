@@ -1,0 +1,50 @@
+package main
+
+import (
+	"io"
+	"log"
+	"net"
+	"os"
+)
+
+func main() {
+
+	// Environment configs
+	port := os.Getenv("GOMEMDB_PORT")
+	if port == "" {
+		port = ":6379"
+	}
+
+	// Create new server
+	listener, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalf("error to start tcp server (%v): %v", port, err)
+	}
+
+	// Accepting connections
+	conn, err := listener.Accept()
+	if err != nil {
+		log.Fatalf("error to accept new connections: %v", err)
+	}
+	defer conn.Close()
+
+	log.Printf("tcp listening on port: %v", port)
+
+	for {
+
+		buf := make([]byte, 1024)
+
+		// read messages
+		_, err := conn.Read(buf)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			log.Fatalf("error reading from client: %v", err.Error())
+		}
+
+		conn.Write([]byte("+OK\r\n"))
+
+	}
+
+}
