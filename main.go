@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error to start tcp server (%v): %v", port, err)
 	}
+	log.Printf("tcp listening on port: %v", port)
 
 	// Accepting connections
 	conn, err := listener.Accept()
@@ -27,8 +28,6 @@ func main() {
 		log.Fatalf("error to accept new connections: %v", err)
 	}
 	defer conn.Close()
-
-	log.Printf("tcp listening on port: %v", port)
 
 	for {
 
